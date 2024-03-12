@@ -1,6 +1,8 @@
+from rest_framework import viewsets
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Post
 from .forms import PostForm
+from .serializers import PostSerializer
 
 # Create your views here.
 def post_list(request):
@@ -26,3 +28,8 @@ def post_edit(request, pk):
             return redirect('post_list')
     form = PostForm(instance=post)
     return render(request, 'post_edit.html', {'form': form})
+
+
+class PostViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
