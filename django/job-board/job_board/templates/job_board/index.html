@@ -1,0 +1,26 @@
+{% load humanize %}
+
+<html>
+    <body>
+        <h1>Job Board</h1>
+
+        <h2>Active</h2>
+        <ul>
+            {% for post in active_posts %}
+            <li>
+                {{post.title|title}} | {{post.description}} | ${{ post.salary|intcomma }}
+            </li>
+            {% endfor %}
+        </ul>
+
+        <h2>Inactive</h2>
+
+        <ul>
+            {% for post in inactive_posts %}
+            <li>
+                {{post.title|title}} | {{post.description}} | ${{ post.salary|intcomma }}
+            </li>
+            {% endfor %}
+        </ul>
+    </body>
+</html>
