@@ -9,3 +9,6 @@ def about(req):
 
 def hello(req, name):
     return HttpResponse(f"Hello {name}")
+
+def add(req, x, y):
+    return HttpResponse(f"res: {x+y}")
