@@ -1,0 +1,13 @@
+{% extends "movies/_base.html" %}
+<html>
+    <body>
+        {%block content%}
+        <h1>My favorite movies!</h1>
+        <ul>
+            {% for movie in movies%}
+            <li>{{movie|title}}</li>
+            {% endfor %}
+        </ul>
+        {% endblock %}
+    </body>
+</html>
