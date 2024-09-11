@@ -1,7 +1,8 @@
-{% load humanize %}
+{% extends "job_board/_base.html" %} {% load humanize %}
 
 <html>
     <body>
+        {% block content %}
         <h1>Job Board</h1>
 
         <h2>Active</h2>
@@ -22,5 +23,6 @@
             </li>
             {% endfor %}
         </ul>
+        {% endblock content %}
     </body>
 </html>
