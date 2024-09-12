@@ -7,3 +7,6 @@ class JobPosting(models.Model):
     company = models.CharField(max_length=100)
     salary = models.IntegerField()
     is_active = models.BooleanField(default=False)
+
+    def __str__(self) -> str:
+        return f"{self.title} | {self.description} | {'active' if self.is_active else 'inactive'}"
