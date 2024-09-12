@@ -1,0 +1,12 @@
+{% extends 'links/_base.html' %} {% block content %}
+<div class="sm:w-3/4 mx-auto">
+    <form action="" method="POST">
+        {% csrf_token %} {{form}}
+        <input
+            class="rounded px-5 py-2 bg-green-300 hover:cursor-pointer"
+            type="submit"
+            value="Create"
+        />
+    </form>
+</div>
+{% endblock content %}
