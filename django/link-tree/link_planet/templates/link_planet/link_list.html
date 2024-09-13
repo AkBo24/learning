@@ -75,12 +75,10 @@
                     </a>
                 </td>
                 <td class="px-4 py-3 underline text-blue-600">
-                    {% comment %} <a href="{% url 'link-update' link.id %}">Edit</a> {% endcomment %}
-                    <a href="">Edit</a>
+                    <a href="{% url 'link-update' link.id %}">Edit</a>
                 </td>
                 <td class="px-4 py-3 underline text-red-600">
-                    {% comment %} <a href="{% url 'link-delete' link.id %}">Delete</a> {% endcomment %}
-                    <a href="">Delete</a>
+                    <a href="{% url 'link-delete' link.id %}">Delete</a>
                 </td>
             </tr>
             {% endfor %}
