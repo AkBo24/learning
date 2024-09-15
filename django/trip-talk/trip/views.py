@@ -7,6 +7,9 @@ from . import models
 class HomeView(TemplateView):
     template_name = "trip/index.html"
 
-class TripListView(ListView):
-    model = models.Trip
-    # template_name = "TripListView.html"
+def trips_list(req):
+    trips = models.Trip.objects.all()
+    context = {
+        'trips': trips
+    }
+    return render(req, 'trip/trips_list.html', context)
