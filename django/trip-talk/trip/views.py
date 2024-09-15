@@ -1,6 +1,12 @@
 from django.shortcuts import render, HttpResponse
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, ListView
+
+from . import models
 
 # Create your views here.
 class HomeView(TemplateView):
     template_name = "trip/index.html"
+
+class TripListView(ListView):
+    model = models.Trip
+    # template_name = "TripListView.html"
