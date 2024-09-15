@@ -1,16 +1,22 @@
 <h2>Trips</h2>
 
 {% if user.is_authenticated %}
-<p>{{user.username}}</p>
+<p>Logged in as <b>{{user.username}}</b></p>
 {% else %}
 <a href="{% url 'login' %}">Please login</a>
+
+{% endif %}
+<hr />
+
+{% if trips %} {% for trip in trips %}
+<ul>
+    <li>{{trip.city}} | {{trip.country}}</li>
+</ul>
+{% endfor %} {% else %}
+<p>No upcoming trips</p>
 {% endif %}
 
-<ul>
-    {% for trip in trips %}
-    <li>{{trip.city}} | {{trip.country}}</li>
-    {% endfor %}
-</ul>
+<hr />
 
 <form action="{% url 'logout' %}" method="post">
     {% csrf_token %}
