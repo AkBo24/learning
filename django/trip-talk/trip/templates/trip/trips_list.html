@@ -1,6 +1,18 @@
 <h2>Trips</h2>
+
+{% if user.is_authenticated %}
+<p>{{user.username}}</p>
+{% else %}
+<a href="{% url 'login' %}">Please login</a>
+{% endif %}
+
 <ul>
     {% for trip in trips %}
     <li>{{trip.city}} | {{trip.country}}</li>
     {% endfor %}
 </ul>
+
+<form action="{% url 'logout' %}" method="post">
+    {% csrf_token %}
+    <button type="submit">Logout</button>
+</form>
