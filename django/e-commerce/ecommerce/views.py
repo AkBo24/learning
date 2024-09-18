@@ -13,9 +13,9 @@ class WebsiteListView(ListView):
     model = models.Website
     # template_name = "ecommerce/dashboard.html"
 
-    # def get_queryset(self):
-    #     # print('hi', models.Website.objects.filter(name="t/"))
-    #     return models.Website.objects.all()
+    def get_queryset(self):
+        print('hi', models.Website.objects.all())
+        return models.Website.objects.all()
 
     # def get_queryset(self):
     #     return models.Note.objects.filter(trip__owner=self.request.user)

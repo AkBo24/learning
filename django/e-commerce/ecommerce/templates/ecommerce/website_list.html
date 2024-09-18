@@ -2,12 +2,12 @@
 
 <hr>
 
-{% if websites %} 
-{% for site in object_website %}
-<li>{{site.name}}</li>
+{% if object_list %}
+{% for site in object_list %}
+<li>{{site.name}} | <a href="{% url "website-create" %}">site.url</a></li>
 {% endfor %}
 {% else %}
-<p>No sites found</p>
+<p>No sites founesdaefewrtd</p>
 {% endif %}
 
 <a href="{% url "website-create" %}">Create a website</a>
