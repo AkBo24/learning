@@ -1,0 +1,13 @@
+<h1>Your sites</h1>
+
+<hr>
+
+{% if websites %} 
+{% for site in object_website %}
+<li>{{site.name}}</li>
+{% endfor %}
+{% else %}
+<p>No sites found</p>
+{% endif %}
+
+<a href="{% url "website-create" %}">Create a website</a>
