@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponse, redirect
-from django.views.generic import CreateView, ListView
+from django.views.generic import CreateView, ListView, DetailView, UpdateView
 from django.urls import reverse_lazy
 
 from . import models
@@ -29,4 +29,13 @@ class WebsiteCreateView(CreateView):
     def form_valid(self, form):
         form.instance.owner = self.request.user
         return super().form_valid(form)
+    
+class WebisteUpdateView(UpdateView):
+    model = models.Website
+    fields = ["name", "description", "url"]
+    success_url = reverse_lazy('dashboard')
+    
+    
+class WebsiteDetailView(DetailView):
+    model = models.Website
     

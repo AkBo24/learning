@@ -4,7 +4,7 @@
 
 {% if object_list %}
 {% for site in object_list %}
-<li>{{site.name}} | <a href="{% url "website-create" %}">site.url</a></li>
+<li>{{site.name}} | <a href="{% url "website-detail" pk=site.id %}">Goto Site</a></li>
 {% endfor %}
 {% else %}
 <p>No sites founesdaefewrtd</p>

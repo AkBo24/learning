@@ -1,0 +1,8 @@
+<h1>Site {{website.name}}</h1>
+
+<h4>Number of visitors: {{website.visitors}}</h4>
+<h4>Visit Site: <a href="{{website.url}}" target="blank">{{website.url}}</a></h4>
+
+<hr />
+<a href="{% url "website-delete" website.id%}">Delete</a>
+<a href="{% url "website-update" website.id%}">Update</a>
