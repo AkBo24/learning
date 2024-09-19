@@ -1,8 +1,14 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView
+from django.http import JsonResponse
+
 from django.urls import reverse_lazy
 
 from . import models
+from . import serializers
+
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
 
 # Create your views here.
 def index(req):
@@ -43,3 +49,15 @@ class WebsiteDetailView(DetailView):
 class WebsiteDeleteView(DeleteView):
     model = models.Website
     success_url = reverse_lazy('dashboard')
+
+@api_view(['GET'])
+def api_website_list_view(req):
+    sites = models.Website.objects.all()
+    serializer = serializers.WebsiteSerializer(sites, many="True")
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def api_website_detail(request, pk):
+    site = models.Website.objects.get(id=pk)
+    serializer = serializers.WebsiteSerializer(site)
+    return Response(serializer.data)
