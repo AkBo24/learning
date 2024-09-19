@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponse, redirect
-from django.views.generic import CreateView, ListView, DetailView, UpdateView
+from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 
 from . import models
@@ -39,3 +39,7 @@ class WebisteUpdateView(UpdateView):
 class WebsiteDetailView(DetailView):
     model = models.Website
     
+
+class WebsiteDeleteView(DeleteView):
+    model = models.Website
+    success_url = reverse_lazy('dashboard')
