@@ -9,6 +9,6 @@ urlpatterns = [
     path('dashboard/<int:pk>', views.WebsiteDetailView.as_view(), name='website-detail'),
     path('dashboard/<int:pk>/update', views.WebisteUpdateView.as_view(), name='website-update'),
     path('dashboard/<int:pk>/delete', views.WebsiteDeleteView.as_view(), name='website-delete'),
-    path('api/website/', views.api_website_list_view),
-    path('api/website/<int:pk>', views.api_website_detail),
+    path('api/website/', views.APIWebsiteList.as_view()),
+    path('api/website/<int:pk>', views.APIWebsiteDetail.as_view()),
 ]

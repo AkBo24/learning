@@ -21,7 +21,7 @@ class Website(models.Model):
     description = models.TextField()
     url = models.URLField()
     visitors = models.PositiveSmallIntegerField(default=0)
-    owner = models.OneToOneField(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def click(self):
         self.visitors += 1

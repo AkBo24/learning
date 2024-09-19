@@ -8,7 +8,7 @@ from . import models
 from . import serializers
 
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView
 
 # Create your views here.
 def index(req):
@@ -50,14 +50,11 @@ class WebsiteDeleteView(DeleteView):
     model = models.Website
     success_url = reverse_lazy('dashboard')
 
-@api_view(['GET'])
-def api_website_list_view(req):
-    sites = models.Website.objects.all()
-    serializer = serializers.WebsiteSerializer(sites, many="True")
-    return Response(serializer.data)
+class APIWebsiteList(ListAPIView):
+    queryset = models.Website.objects.all()
+    serializer_class = serializers.WebsiteSerializer
 
-@api_view(['GET'])
-def api_website_detail(request, pk):
-    site = models.Website.objects.get(id=pk)
-    serializer = serializers.WebsiteSerializer(site)
-    return Response(serializer.data)
+class APIWebsiteDetail(RetrieveUpdateDestroyAPIView):
+    queryset = models.Website.objects.all()
+    serializer_class = serializers.WebsiteSerializer
+
