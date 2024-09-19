@@ -17,11 +17,16 @@ class WebsiteListView(ListView):
         print('hi', models.Website.objects.all())
         return models.Website.objects.all()
 
-    # def get_queryset(self):
-    #     return models.Note.objects.filter(trip__owner=self.request.user)
+    def get_queryset(self):
+        return models.Website.objects.filter(owner=self.request.user)
 
 class WebsiteCreateView(CreateView):
     model = models.Website
-    fields = "__all__"
+    fields = ["name", "description", "url"]
     # template_name = 'ecommerce/website_create.html'
     success_url = reverse_lazy('dashboard')
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
+    

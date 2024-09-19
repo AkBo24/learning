@@ -8,7 +8,6 @@ User = get_user_model()
 """
 User has a website
 
-
 Table Website:
 - name
 - description
@@ -21,5 +20,5 @@ class Website(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField()
     url = models.URLField()
-    visitors = models.PositiveSmallIntegerField()
-    
+    visitors = models.PositiveSmallIntegerField(default=0)
+    owner = models.OneToOneField(User, on_delete=models.CASCADE)
