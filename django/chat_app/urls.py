@@ -1,9 +1,13 @@
 from django.contrib import admin
 from django.urls import path, include
 
-from .views import index, room
+from . import views
 
 urlpatterns = [
-    path('', index),
-    path('room', room)
+    path('', views.index),
+    path('room', views.room),
+    path('api/chat-rooms', views.APIChatRoomList.as_view()),         # GET all chat-rooms
+    path('api/chat-rooms/<int:pk>', views.APIChatRoom.as_view()), # GET,POST,UPDATE,DELETE chat-room
+    path('api/chat-rooms/<int:pk>/messages', views.APIChatRoomMessageList.as_view()),          # GET,POST,UPDATE,DELETE messages
+    path('api/messages', views.APIMessageList.as_view()),          # GET all messages
 ]
