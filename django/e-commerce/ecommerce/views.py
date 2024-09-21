@@ -57,4 +57,3 @@ class APIWebsiteList(ListAPIView):
 class APIWebsiteDetail(RetrieveUpdateDestroyAPIView):
     queryset = models.Website.objects.all()
     serializer_class = serializers.WebsiteSerializer
-

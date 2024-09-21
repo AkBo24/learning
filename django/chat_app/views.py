@@ -1,0 +1,8 @@
+from django.shortcuts import render, HttpResponse
+
+# Create your views here.
+def index(req):
+    return HttpResponse('test')
+
+def room(req):
+    return HttpResponse('room')
