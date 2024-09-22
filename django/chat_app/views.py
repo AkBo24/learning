@@ -1,4 +1,5 @@
 from django.shortcuts import render, HttpResponse
+from django.views.generic import ListView, DetailView
 
 from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView, ListCreateAPIView
 from rest_framework.exceptions import NotFound
@@ -7,8 +8,24 @@ from .models import ChatRoom, Message
 from .serializers import ChatRoomSerializer, MessageSerializer
 
 # Create your views here.
-def index(req):
-    return HttpResponse('test')
+class ChatRoomListView(ListView):
+    model = ChatRoom
+    template_name = "chat_app/index.html"
+
+class ChatRoomDetailView(DetailView):
+    model = ChatRoom
+    template_name = "chat_app/room.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        chat_room = self.object
+
+        messages = Message.objects.filter(chatRoom=chat_room)
+        context['messages'] = messages
+
+        return context
+
 
 def room(req):
     return HttpResponse('room')

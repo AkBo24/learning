@@ -1,0 +1,6 @@
+<h1>Chat with anyone!</h1>
+<ul>
+    {% for site in object_list %}
+    <li>{{site.name}} | <a href="{% url "room" pk=site.id %}">View Room</a></li>
+    {% endfor %}
+</ul>

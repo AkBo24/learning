@@ -1,0 +1,11 @@
+<h1>Room: {{chatroom.name}}</h1>
+<div class="messages">
+    {% for message in messages %}
+    <div class="message">
+        <strong>{{ message.user.username }}:</strong> {{ message.content }}
+        <small>{{ message.timestamp }}</small>
+    </div>
+    {% empty %}
+    <p>No messages in this room yet.</p>
+    {% endfor %}
+</div>
