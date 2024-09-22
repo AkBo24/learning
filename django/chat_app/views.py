@@ -1,6 +1,7 @@
 from django.shortcuts import render, HttpResponse
 
 from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView, ListCreateAPIView
+from rest_framework.exceptions import NotFound
 
 from .models import ChatRoom, Message
 from .serializers import ChatRoomSerializer, MessageSerializer
@@ -21,11 +22,27 @@ class APIChatRoom(RetrieveUpdateDestroyAPIView):
     serializer_class = ChatRoomSerializer
 
 class APIChatRoomMessageList(ListCreateAPIView):
-    print(Message.objects.filter(chatRoom=1))
-    queryset = Message.objects.filter(chatRoom_id=1)
     serializer_class = MessageSerializer
 
-# class APIChatRoomMessageCreate(CreateAPIView):
+    def get_queryset(self):
+        pk = self.kwargs.get("pk")
+
+        try:
+            chat_room = ChatRoom.objects.get(pk=pk)
+        except ChatRoom.DoesNotExist:
+            raise NotFound(f"Chat room with id {pk} does not exist.")
+        
+        return Message.objects.filter(chatRoom=chat_room)
+
+    def perform_create(self, serializer):
+        pk = self.kwargs.get("pk")
+
+        try:
+            chat_room = ChatRoom.objects.get(pk=pk)
+        except ChatRoom.DoesNotExist:
+            raise NotFound(f"Chat room with id {pk} does not exist.")
+        
+        serializer.save(chatRoom=chat_room)
 
 
 class APIMessageList(ListAPIView):
