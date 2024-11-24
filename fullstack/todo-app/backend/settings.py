@@ -32,7 +32,10 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # Third-party
     'webpack_loader',
+    'rest_framework',
+    # Internal
     'frontend',
     'todo',
     'django.contrib.admin',
