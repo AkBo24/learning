@@ -516,3 +516,5 @@ dist
 .svelte-kit
 
 # End of https://www.toptal.com/developers/gitignore/api/node
+fullstack/todo-app/frontend/static/frontend/
+fullstack/todo-app/webpack-stats.json
