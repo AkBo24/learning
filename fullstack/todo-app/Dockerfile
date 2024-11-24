@@ -9,6 +9,3 @@ COPY requirements.txt /usr/src/app/
 # Install dependencies in the virtual environment
 RUN pip install --upgrade pip \
     && pip install --no-cache-dir -r /usr/src/app/requirements.txt
-
-# Copy application files
-# COPY . /usr/src/app/

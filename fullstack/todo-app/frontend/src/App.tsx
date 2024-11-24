@@ -1,4 +1,5 @@
 import React from 'react';
+import Todo from './components/Todo';
 
 const Example = (props: { title: string; number: number }) => {
     return (
@@ -9,7 +10,7 @@ const Example = (props: { title: string; number: number }) => {
 };
 
 const App = () => {
-    return <Example title='Hello World' number={23933} />;
+    return <Todo todo={{ title: 'Todo' }} />;
 };
 
 export default App;
