@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from django.contrib.auth import get_user_model
 
@@ -7,6 +9,7 @@ User = get_user_model()
 class Todo(models.Model):
     class Meta:
         verbose_name_plural = 'Todos'
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=100)
     description = models.TextField()
     completed = models.BooleanField(default=False)
