@@ -1,8 +1,10 @@
 services:
     app:
         build: .
-        command: python3 /usr/src/app/manage.py runserver 0.0.0.0:8000
+        command: python /usr/src/app/manage.py runserver 0.0.0.0:8000
         volumes:
             - ./:/usr/src/app/
         ports:
             - '8000:8000'
+        stdin_open: true # docker run -i
+        tty: true # docker run -t

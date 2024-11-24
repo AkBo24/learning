@@ -1,10 +1,14 @@
 FROM python:3.10-slim
 
-WORKDIR /usr/src/app
+# Create the directory
+RUN mkdir -p /usr/src/app
 
-COPY requirements.txt ./
+# Copy requirements.txt to the directory
+COPY requirements.txt /usr/src/app/
 
-RUN python3 -m venv venv \
-ENV PATH="/usr/src/app/venv/bin:$PATH"
+# Install dependencies in the virtual environment
 RUN pip install --upgrade pip \
-    && pip install --no-cache-dir -r requirements.txt
+    && pip install --no-cache-dir -r /usr/src/app/requirements.txt
+
+# Copy application files
+# COPY . /usr/src/app/
