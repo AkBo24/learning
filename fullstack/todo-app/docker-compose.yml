@@ -1,13 +1,14 @@
 services:
-    # frontend:
-    #     build:
-    #         context: .
-    #         dockerfile: ./frontend.Dockerfile
-    #     command: npm run dev # /bin/sh
-    #     ports:
-    #         - '3000:3000' # Serve the React app on port 3000
-    #     volumes:
-    #         - ./frontend:/usr/src/app/frontend # Sync local frontend code for hot reloading
+    frontend:
+        build:
+            context: .
+            dockerfile: ./frontend.Dockerfile
+        command: npm run dev # /bin/sh
+        ports:
+            - '3000:3000' # Serve the React app on port 3000
+        volumes:
+            - ./:/usr/src/app/
+        #     - ./frontend:/usr/src/app/frontend # Sync local frontend code for hot reloading
     #         # - /usr/src/app/node_modules # Prevent overwriting of node_modules
     #     stdin_open: true
     #     tty: true

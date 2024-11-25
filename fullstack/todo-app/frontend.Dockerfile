@@ -10,8 +10,8 @@ COPY ./webpack.config.js ./
 # Install dependencies
 RUN npm install
 
-# Copy the rest of the frontend application code
-COPY ./frontend .
+# # Copy the rest of the frontend application code
+# COPY ./frontend .
 
 # Expose the port for the React development server
 EXPOSE 3000
