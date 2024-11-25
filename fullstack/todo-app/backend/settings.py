@@ -146,3 +146,6 @@ SPECTACULAR_SETTINGS = {
     'SERVE_INCLUDE_SCHEMA': False,
     # OTHER SETTINGS
 }
+
+CSRF_COOKIE_NAME = "csrftoken"  # Default name for CSRF token cookie
+CSRF_USE_SESSIONS = False      # If using session-based CSRF tokens
