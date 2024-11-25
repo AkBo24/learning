@@ -28,7 +28,15 @@ export const api = createApi({
             }),
             invalidatesTags: ['todos'],
         }),
+        updateTodo: builder.mutation<Todo, Partial<Todo> & Pick<Todo, 'id'>>({
+            query: ({ id, ...patch }) => ({
+                url: `/todos/${id}/`,
+                method: 'PATCH',
+                body: patch,
+            }),
+            invalidatesTags: ['todos'],
+        }),
     }),
 });
 
-export const { useGetTodosQuery, useAddTodoMutation } = api;
+export const { useGetTodosQuery, useAddTodoMutation, useUpdateTodoMutation } = api;
