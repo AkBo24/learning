@@ -16,7 +16,7 @@ export const api = createApi({
     }),
     tagTypes: ['todos'],
     endpoints: (builder) => ({
-        getTodos: builder.query<Todo[], undefined>({
+        getTodos: builder.query<Todo[], void>({
             query: () => `/todos`,
             providesTags: ['todos'],
         }),
