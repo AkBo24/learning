@@ -54,9 +54,29 @@ def read_file_tool(filename: str) -> Dict[str, Any]:
         "content": content
     }
 
+def list_files_tool(path: str) -> Dict[str, Any]:
+    """
+    Lists the files in a directory provided by the user.
+    :param path: The path to a directory to list files from.
+    :return: A list of files in the directory.
+    """
+    full_path = resolve_abs_path(path)
+    all_files = []
+    for item in full_path.iterdir():
+        all_files.append({
+            "filename": item.name,
+            "type": "file" if item.is_file() else "dir"
+        })
+    return {
+        "path": str(full_path),
+        "files": all_files
+    }
+
 READ_FILE = "read_file"
+LIST_FILES = "list_files"
 TOOL_REGISTRY = {
-    READ_FILE: read_file_tool
+    READ_FILE: read_file_tool,
+    LIST_FILES: list_files_tool
 }
 
 tools = [
@@ -69,7 +89,22 @@ tools = [
             "properties": {
                 "filename": {
                     "type": "string",
-                    "description": "The name of the file to read. ",
+                    "description": "The name of the file to read.",
+                },
+            },
+            "required": ["filename"],
+        },
+    },
+    {
+        "type": "function",
+        "name": LIST_FILES,
+        "description": "Lists the files in a directory provided by the user.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "path": {
+                    "type": "string",
+                    "description": "The path to a directory to list files from.",
                 },
             },
             "required": ["filename"],
@@ -186,6 +221,8 @@ def run_coding_agent_loop():
 
                 if name == READ_FILE:
                     resp = tool(args.get("filename", "."))
+                elif name == LIST_FILES:
+                    resp = tool(args.get("path", "."))
 
                 conversation.append({
                     "role": "user",
