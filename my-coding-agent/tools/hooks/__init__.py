@@ -1,5 +1,6 @@
 from tools.hooks.context import ToolHookContext
 from tools.hooks.error_logger import log_tool_error
+from tools.hooks.main_logger import log_tool_call
 from tools.hooks.manager import emit_hook, register_hook
 
 
@@ -9,6 +10,7 @@ AFTER_TOOL_SUCCESS = "after_tool_success"
 AFTER_TOOL_ERROR = "after_tool_error"
 AFTER_TOOL_CALL = "after_tool_call"
 
+register_hook(AFTER_TOOL_CALL, log_tool_call)
 register_hook(AFTER_TOOL_ERROR, log_tool_error)
 
 __all__ = [
