@@ -72,11 +72,42 @@ def list_files_tool(path: str) -> Dict[str, Any]:
         "files": all_files
     }
 
+def edit_file_tool(path: str, old_str: str, new_str: str) -> Dict[str, Any]:
+    """
+    Replaces first occurrence of old_str with new_str in file. If old_str is empty,
+    create/overwrite file with new_str.
+    :param path: The path to the file to edit.
+    :param old_str: The string to replace.
+    :param new_str: The string to replace with.
+    :return: A dictionary with the path to the file and the action taken.
+    """
+    full_path = resolve_abs_path(path)
+    if old_str == "":
+        full_path.write_text(new_str, encoding="utf-8")
+        return {
+            "path": str(full_path),
+            "action": "created_file"
+        }
+    original = full_path.read_text(encoding="utf-8")
+    if original.find(old_str) == -1:
+        return {
+            "path": str(full_path),
+            "action": "old_str not found"
+        }
+    edited = original.replace(old_str, new_str, 1)
+    full_path.write_text(edited, encoding="utf-8")
+    return {
+        "path": str(full_path),
+        "action": "edited"
+    }
+
 READ_FILE = "read_file"
 LIST_FILES = "list_files"
+EDIT_FILE = "edit_file"
 TOOL_REGISTRY = {
     READ_FILE: read_file_tool,
-    LIST_FILES: list_files_tool
+    LIST_FILES: list_files_tool,
+    EDIT_FILE: edit_file_tool
 }
 
 tools = [
@@ -107,7 +138,30 @@ tools = [
                     "description": "The path to a directory to list files from.",
                 },
             },
-            "required": ["filename"],
+            "required": ["path"],
+        },
+    },
+    {
+        "type": "function",
+        "name": EDIT_FILE,
+        "description": "Replaces first occurrence of old_str with new_str in file. If old_str is empty, create/overwrite file with new_str.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "path": {
+                    "type": "string",
+                    "description": "The path to a directory to list files from.",
+                },
+                "old_str": {
+                    "type": "string",
+                    "description": "The string to replace.",
+                },
+                "new_str": {
+                    "type": "string",
+                    "description": "The string to replace with.",
+                },
+            },
+            "required": ["path", "old_str", "new_str"],
         },
     },
 ]
@@ -127,20 +181,11 @@ def get_full_system_prompt():
         tool_str_repr += f"\n{'='*15}\n"
     return SYSTEM_PROMPT.format(tool_list_repr=tool_str_repr)
 
-def execute_llm_call(conversation: List[Dict[str, str]]):
-    system_content = ""
-    messages = []
-
-    for msg in conversation:
-        if msg.get("role") == "system":
-            system_content = msg["content"]
-        else:
-            messages.append(msg)
-
+def execute_llm_call(system_content: str, input_messages: List[Any]):
     response = client.responses.create(
         model="gpt-5.5",
         instructions=system_content,
-        input=messages,
+        input=input_messages,
         tools=tools
     )
     # print("*********** OUTPUT *************")
@@ -155,8 +200,8 @@ def execute_llm_call(conversation: List[Dict[str, str]]):
 
 def extract_tool_invocations(output):
     """
-    Return list of (tool_name, args) requested in 'tool: name({...})' lines.
-    The parser expects single-line, compact JSON in parentheses.
+    Return list of (tool_name, args, tool_call) requested by Responses API
+    function_call output items.
     """
 
     invocations = []
@@ -180,14 +225,13 @@ def extract_tool_invocations(output):
     return invocations
 
 def run_coding_agent_loop():
+    system_content = get_full_system_prompt()
+
     print("*********** SYSTEM PROMPT *************")
-    print(get_full_system_prompt())
+    print(system_content)
     print("*********** SYSTEM PROMPT *************")
 
-    conversation = [{
-        "role": "system",
-        "content": get_full_system_prompt()
-    }]
+    conversation: List[Any] = []
 
     while True:
         try:
@@ -201,20 +245,19 @@ def run_coding_agent_loop():
         })
 
         while True:
-            assistant_output, assistant_response = execute_llm_call(conversation)
+            assistant_output, assistant_response = execute_llm_call(system_content, conversation)
             tool_invocations = extract_tool_invocations(assistant_output)
 
             if not tool_invocations:
                 # Assuming always a text response back to user
                 output_text = assistant_response.output_text
                 print(f"{ASSISTANT_COLOR}Assistant:{RESET_COLOR}: {output_text}")
-                conversation.append({
-                    "role": "assistant",
-                    "content": output_text
-                })
+                conversation.extend(assistant_output)
                 break
 
-            for name, args, _ in tool_invocations:
+            conversation.extend(assistant_output)
+
+            for name, args, tool_call in tool_invocations:
                 tool = TOOL_REGISTRY[name]
                 resp = ""
                 print(name, args)
@@ -223,10 +266,15 @@ def run_coding_agent_loop():
                     resp = tool(args.get("filename", "."))
                 elif name == LIST_FILES:
                     resp = tool(args.get("path", "."))
+                elif name == EDIT_FILE:
+                    resp = tool(args.get("path", "."), 
+                                args.get("old_str", ""), 
+                                args.get("new_str", ""))
 
                 conversation.append({
-                    "role": "user",
-                    "content": f"tool_result({json.dumps(resp)})"
+                    "type": "function_call_output",
+                    "call_id": tool_call.call_id,
+                    "output": json.dumps(resp)
                 })
     return
 
