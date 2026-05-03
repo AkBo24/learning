@@ -13,6 +13,7 @@ from tools.hooks import (
 )
 from tools.list_files_tool import TOOL as LIST_FILES_TOOL
 from tools.read_file_tool import TOOL as READ_FILE_TOOL
+from tools.run_shell_command_tool import TOOL as RUN_SHELL_COMMAND_TOOL
 
 
 TOOL_REGISTRY = {
@@ -20,6 +21,7 @@ TOOL_REGISTRY = {
     LIST_FILES_TOOL.name.value: LIST_FILES_TOOL,
     EDIT_FILE_TOOL.name.value: EDIT_FILE_TOOL,
     DELETE_FILE_TOOL.name.value: DELETE_FILE_TOOL,
+    RUN_SHELL_COMMAND_TOOL.name.value: RUN_SHELL_COMMAND_TOOL,
 }
 
 OPENAI_TOOLS = [tool.config() for tool in TOOL_REGISTRY.values()]
