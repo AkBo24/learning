@@ -27,7 +27,7 @@ Tool modules live directly under `tools/` and conventionally use the
 ## Create a new tool
 
 1. Add the new tool name to `/tools/enum/tool_names.py`
-2. Create the actual tool under `/tools/<tool_name>_tool.py`. Copy the following format and rename `my_tool` / `MY_TOOL` / descriptions for the new tool:
+2. Create the actual tool under `/tools/<tool_name>_tool.py`. Copy the following format and rename `MY_TOOL` / descriptions for the new tool. Keep the main execution function named `exec_tool`:
 
 ```py
 from typing import Any, Dict
@@ -51,7 +51,7 @@ PARAMETERS = {
 }
 
 
-def my_tool(path: str) -> Dict[str, Any]:
+def exec_tool(path: str) -> Dict[str, Any]:
     # Main implementation.
     return {
         "path": path,
@@ -69,7 +69,7 @@ TOOL = Tool(
     name=ToolName.MY_TOOL,
     description=DESCRIPTION,
     parameters=PARAMETERS,
-    exec=my_tool,
+    exec=exec_tool,
     decode_params=decode_params,
 )
 ```

@@ -30,7 +30,7 @@ PARAMETERS = {
 }
 
 
-def edit_file(path: str, old_str: str, new_str: str) -> Dict[str, Any]:
+def exec_tool(path: str, old_str: str, new_str: str) -> Dict[str, Any]:
     """
     Replaces first occurrence of old_str with new_str in file. If old_str is empty,
     create/overwrite file with new_str.
@@ -72,6 +72,6 @@ TOOL = Tool(
     name=ToolName.EDIT_FILE,
     description=DESCRIPTION,
     parameters=PARAMETERS,
-    exec=edit_file,
+    exec=exec_tool,
     decode_params=decode_params,
 )

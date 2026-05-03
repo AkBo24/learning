@@ -19,7 +19,7 @@ PARAMETERS = {
 }
 
 
-def list_files(path: str) -> Dict[str, Any]:
+def exec_tool(path: str) -> Dict[str, Any]:
     """
     Lists the files in a directory provided by the user.
     :param path: The path to a directory to list files from.
@@ -48,6 +48,6 @@ TOOL = Tool(
     name=ToolName.LIST_FILES,
     description=DESCRIPTION,
     parameters=PARAMETERS,
-    exec=list_files,
+    exec=exec_tool,
     decode_params=decode_params,
 )

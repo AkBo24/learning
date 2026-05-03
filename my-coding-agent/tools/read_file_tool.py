@@ -19,7 +19,7 @@ PARAMETERS = {
 }
 
 
-def read_file(filename: str) -> Dict[str, Any]:
+def exec_tool(filename: str) -> Dict[str, Any]:
     """
     Gets the full content of a file provided by the user.
     :param filename: The name of the file to read.
@@ -45,6 +45,6 @@ TOOL = Tool(
     name=ToolName.READ_FILE,
     description=DESCRIPTION,
     parameters=PARAMETERS,
-    exec=read_file,
+    exec=exec_tool,
     decode_params=decode_params,
 )

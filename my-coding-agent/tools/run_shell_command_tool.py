@@ -28,7 +28,7 @@ PARAMETERS = {
 }
 
 
-def run_shell_command(
+def exec_tool(
     command: str,
     cwd: str = ".",
     timeout_seconds: int = 30,
@@ -91,6 +91,6 @@ TOOL = Tool(
     name=ToolName.RUN_SHELL_COMMAND,
     description=DESCRIPTION,
     parameters=PARAMETERS,
-    exec=run_shell_command,
+    exec=exec_tool,
     decode_params=decode_params,
 )

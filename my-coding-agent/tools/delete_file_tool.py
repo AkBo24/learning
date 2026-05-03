@@ -19,7 +19,7 @@ PARAMETERS = {
 }
 
 
-def delete_file(path: str) -> Dict[str, Any]:
+def exec_tool(path: str) -> Dict[str, Any]:
     """
     Deletes a file at the provided path.
     :param path: The path to the file to delete.
@@ -56,6 +56,6 @@ TOOL = Tool(
     name=ToolName.DELETE_FILE,
     description=DESCRIPTION,
     parameters=PARAMETERS,
-    exec=delete_file,
+    exec=exec_tool,
     decode_params=decode_params,
 )
