@@ -111,10 +111,18 @@ def run_coding_agent_loop():
                 print(name, args)
                 hook_output = hook_registry.run(HookEvent.PRE_TOOL_USE, name, args)
 
-                if any(ho.decision==PermissionDecision.DENY for ho in hook_output.values()):
-                    # TODO: figure out what to do for this
-                    pass
-                resp = execute_tool(name, args)
+                denied_output = next(
+                    (ho for ho in hook_output.values() if ho.decision == PermissionDecision.DENY),
+                    None,
+                )
+                if denied_output is not None:
+                    resp = {
+                        "error": "Tool use denied",
+                        "tool_name": name,
+                        "reason": denied_output.denial_reason or "Tool use was denied by a hook.",
+                    }
+                else:
+                    resp = execute_tool(name, args)
 
                 conversation.append({
                     "type": "function_call_output",

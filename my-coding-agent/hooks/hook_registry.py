@@ -3,11 +3,12 @@ import re
 from typing import Callable
 from hooks.types import Hook, HookEvent, HookOutput, PermissionDecision, PreToolUseInput
 from hooks.log_tool_use import LogToolUse
+from hooks.tool_permissions import ToolPermissions
 
 HookCallback = Callable[[dict, str | None], dict]
 
 _HOOK_REGISTRY = {
-    HookEvent.PRE_TOOL_USE: [LogToolUse]
+    HookEvent.PRE_TOOL_USE: [ToolPermissions, LogToolUse]
 }
 """
 Event: Hook[]
@@ -19,7 +20,7 @@ class HookRegistry:
     def __init__(self):
         self._hooks: dict[str, list[Hook]] = _HOOK_REGISTRY
 
-    def run(self, event: HookEvent, tool_use_id, input_data) -> dict[str, HookOutput]:
+    def run(self, event: HookEvent, tool_name, input_data) -> dict[str, HookOutput]:
         """
         1. Take event, input_data, tool_use_id
         2. Get hooks registered for the event
@@ -31,10 +32,9 @@ class HookRegistry:
 
         result = {}
         for hk in self._hooks[event]:
-            tool_name = tool_use_id or ""
             if not _match(hk.matcher, tool_name):
                 continue
-            
+            print(f"*********EXECUTING HOOK:{hk}")
             hook_input = None
             if event == HookEvent.PRE_TOOL_USE:
                 hook_input = PreToolUseInput(
@@ -43,7 +43,7 @@ class HookRegistry:
                     hook_name=hk.name,
                     tool_name=tool_name,
                     tool_input=input_data or {},
-                    tool_use_id=tool_use_id or "",
+                    tool_use_id=tool_name or "",
                 )
 
             output = hk.run(hook_input) or HookOutput(decision=PermissionDecision.ALLOW)

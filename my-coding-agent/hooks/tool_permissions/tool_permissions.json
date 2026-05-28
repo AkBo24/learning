@@ -1,0 +1,19 @@
+{
+  "tools": {
+    "read_file": {
+      "status": "allow"
+    },
+    "list_files": {
+      "status": "deny"
+    },
+    "edit_file": {
+      "status": "allow"
+    },
+    "delete_file": {
+      "status": "allow"
+    },
+    "run_shell_command": {
+      "status": "allow"
+    }
+  }
+}
