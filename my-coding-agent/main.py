@@ -1,15 +1,16 @@
-import inspect
 import json
 
 from openai import OpenAI
 from dotenv import load_dotenv
 from typing import Any, List
 
-from tools import OPENAI_TOOLS, TOOL_REGISTRY, execute_tool
+from tools import OPENAI_TOOLS, execute_tool
+from hooks import HookRegistry, HookEvent, PermissionDecision
 
 load_dotenv()
 
 client = OpenAI()
+hook_registry = HookRegistry()
 
 YOU_COLOR = "\u001b[94m"
 ASSISTANT_COLOR = "\u001b[93m"
@@ -79,6 +80,9 @@ def run_coding_agent_loop():
 
     conversation: List[Any] = []
 
+    # hook_registry.run(HookEvent.PRE_TOOL_USE, None, None)
+    # return
+
     while True:
         try:
             user_input = input(f"{YOU_COLOR}You:{RESET_COLOR}:")
@@ -105,6 +109,11 @@ def run_coding_agent_loop():
 
             for name, args, tool_call in tool_invocations:
                 print(name, args)
+                hook_output = hook_registry.run(HookEvent.PRE_TOOL_USE, name, args)
+
+                if any(ho.decision==PermissionDecision.DENY for ho in hook_output.values()):
+                    # TODO: figure out what to do for this
+                    pass
                 resp = execute_tool(name, args)
 
                 conversation.append({
