@@ -9,14 +9,11 @@ Tools are functions that this coding agent can invoke. Currently, all tools are 
 
 ```
 tools/
-  const/
-    tool_registry.py   # imports tool modules, builds TOOL_REGISTRY, exposes execute_tool()
-  enum/
-    tool_names.py      # canonical ToolName enum values
-  hooks/               # lifecycle hooks and logging for tool execution
   types/
     tool.py            # Tool dataclass and OpenAI function config adapter
+    tool_names.py      # canonical ToolName enum values
   utils/               # shared helpers used by tools
+  tool_registry.py     # imports tool modules, builds TOOL_REGISTRY, exposes execute_tool()
   read_file_tool.py    # tool module example
   ...
 ```
@@ -26,14 +23,13 @@ Tool modules live directly under `tools/` and conventionally use the
 
 ## Create a new tool
 
-1. Add the new tool name to `/tools/enum/tool_names.py`
+1. Add the new tool name to `/tools/types/tool_names.py`
 2. Create the actual tool under `/tools/<tool_name>_tool.py`. Copy the following format and rename `MY_TOOL` / descriptions for the new tool. Keep the main execution function named `exec_tool`:
 
 ```py
 from typing import Any, Dict
 
-from tools.enum.tool_names import ToolName
-from tools.types import Tool
+from tools.types import Tool, ToolName
 # Add any other imports here.
 
 DESCRIPTION = "Describe what this tool does."
@@ -78,7 +74,7 @@ The keys returned by `decode_params()` must exactly match the execution
 function's parameter names. `execute_tool()` calls tools as
 `tool.exec(**decoded_params)`.
 
-3. Register the new tool in `/tools/const/tool_registry.py`:
+3. Register the new tool in `/tools/tool_registry.py`:
     - import the module's `TOOL` constant with a clear alias
     - add the alias to `TOOL_REGISTRY` using `TOOL.name.value` as the key
 4. Test the new tool by compiling the project:
