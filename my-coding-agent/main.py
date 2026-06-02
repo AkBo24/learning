@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from typing import Any, List
 
 from tools import OPENAI_TOOLS, execute_tool
-from hooks import HookRegistry, HookEvent, PermissionDecision
+from hooks import HookRegistry, HookEvent, MessageSender, MessageType, PermissionDecision
 
 load_dotenv()
 
@@ -71,12 +71,24 @@ def extract_tool_invocations(output):
 
     return invocations
 
+
+def log_message_sent(sender: MessageSender, contents: str):
+    hook_registry.run(
+        HookEvent.POST_MESSAGE_SENT,
+        input_data={
+            "sender": sender,
+            "message_type": MessageType.MESSAGE,
+            "contents": contents,
+        },
+    )
+
 def run_coding_agent_loop():
     system_content = get_full_system_prompt()
 
     print("*********** SYSTEM PROMPT *************")
     print(system_content)
     print("*********** SYSTEM PROMPT *************")
+    log_message_sent(MessageSender.SYSTEM, system_content)
 
     conversation: List[Any] = []
 
@@ -89,10 +101,12 @@ def run_coding_agent_loop():
         except (KeyboardInterrupt, EOFError):
             break
 
+        user_message = user_input.strip()
         conversation.append({
             "role": "user",
-            "content": user_input.strip()
+            "content": user_message
         })
+        log_message_sent(MessageSender.USER, user_message)
 
         while True:
             assistant_output, assistant_response = execute_llm_call(system_content, conversation)
@@ -103,6 +117,7 @@ def run_coding_agent_loop():
                 output_text = assistant_response.output_text
                 print(f"{ASSISTANT_COLOR}Assistant:{RESET_COLOR}: {output_text}")
                 conversation.extend(assistant_output)
+                log_message_sent(MessageSender.AGENT, output_text)
                 break
 
             conversation.extend(assistant_output)
