@@ -6,7 +6,7 @@ from hooks.types.hook_input import (
     PostMessageSentInput,
     PreToolUseInput,
 )
-from hooks.types.hook_output import HookOutput
+from hooks.types.hook_output import HookOutput, PostMessageSentOutput, PreToolUseOutput
 
 from hooks.types.permission_decision import PermissionDecision
 from hooks.types.hook_event import HookEvent
@@ -20,6 +20,8 @@ __all__ = [
     "PostMessageSentInput",
     "PreToolUseInput",
     "HookOutput",
+    "PostMessageSentOutput",
+    "PreToolUseOutput",
     "PermissionDecision",
     "HookEvent",
 ]

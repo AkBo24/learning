@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from hooks.types import Hook, HookOutput, PermissionDecision, PreToolUseInput
+from hooks.types import Hook, PermissionDecision, PreToolUseInput, PreToolUseOutput
 
 
 CONFIG_PATH = Path(__file__).with_name("tool_permissions.json")
@@ -21,26 +21,26 @@ def _read_config() -> dict[str, Any]:
     return config
 
 
-def run(input_data: PreToolUseInput) -> HookOutput:
+def run(input_data: PreToolUseInput) -> PreToolUseOutput:
     config = _read_config()
     tools = config.get("tools", {})
     if not isinstance(tools, dict):
-        return HookOutput(decision=PermissionDecision.ALLOW)
+        return PreToolUseOutput(decision=PermissionDecision.ALLOW)
 
     tool_config = tools.get(input_data.tool_name, {})
     print(f"*********TOOL CONFIG: {tool_config}")
     if not isinstance(tool_config, dict):
-        return HookOutput(decision=PermissionDecision.ALLOW)
+        return PreToolUseOutput(decision=PermissionDecision.ALLOW)
 
     status = tool_config.get("status")
     if status == PermissionDecision.DENY.value:
-        return HookOutput(
+        return PreToolUseOutput(
             decision=PermissionDecision.DENY,
             should_continue=False,
             denial_reason=f"Tool '{input_data.tool_name}' is disabled by tool permissions.",
         )
 
-    return HookOutput(decision=PermissionDecision.ALLOW)
+    return PreToolUseOutput(decision=PermissionDecision.ALLOW)
 
 
 ToolPermissions = Hook(

@@ -5,7 +5,14 @@ from dotenv import load_dotenv
 from typing import Any, List
 
 from tools import OPENAI_TOOLS, execute_tool
-from hooks import HookRegistry, HookEvent, MessageSender, MessageType, PermissionDecision
+from hooks import (
+    HookRegistry,
+    HookEvent,
+    MessageSender,
+    MessageType,
+    PermissionDecision,
+    PreToolUseOutput,
+)
 
 load_dotenv()
 
@@ -124,10 +131,19 @@ def run_coding_agent_loop():
 
             for name, args, tool_call in tool_invocations:
                 print(name, args)
-                hook_output = hook_registry.run(HookEvent.PRE_TOOL_USE, name, args)
+                hook_output = hook_registry.run(
+                    HookEvent.PRE_TOOL_USE,
+                    match_value=name,
+                    input_data=args,
+                )
 
                 denied_output = next(
-                    (ho for ho in hook_output.values() if ho.decision == PermissionDecision.DENY),
+                    (
+                        ho
+                        for ho in hook_output.values()
+                        if isinstance(ho, PreToolUseOutput)
+                        and ho.decision == PermissionDecision.DENY
+                    ),
                     None,
                 )
                 if denied_output is not None:

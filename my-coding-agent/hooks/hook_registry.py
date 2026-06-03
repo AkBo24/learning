@@ -11,7 +11,6 @@ from hooks.types import (
     HookOutput,
     MessageSender,
     MessageType,
-    PermissionDecision,
     PostMessageSentInput,
     PreToolUseInput,
 )
@@ -38,7 +37,7 @@ class HookRegistry:
         self.cwd = os.getcwd()
         self._create_session_file()
 
-    def run(self, event: HookEvent, tool_name=None, input_data=None) -> dict[str, HookOutput]:
+    def run(self, event: HookEvent, match_value=None, input_data=None) -> dict[str, HookOutput]:
         """
         1. Take event, input_data, tool_use_id
         2. Get hooks registered for the event
@@ -50,7 +49,7 @@ class HookRegistry:
 
         result = {}
         for hk in self._hooks.get(event, []):
-            if not _match(hk.matcher, tool_name):
+            if not _match(hk.matcher, match_value):
                 continue
             print(f"*********EXECUTING HOOK:{hk}")
             hook_input = None
@@ -59,9 +58,9 @@ class HookRegistry:
                     session_id=self.session_id,
                     cwd=self.cwd,
                     hook_name=hk.name,
-                    tool_name=tool_name,
+                    tool_name=match_value,
                     tool_input=input_data or {},
-                    tool_use_id=tool_name or "",
+                    tool_use_id=match_value or "",
                 )
             elif event == HookEvent.POST_MESSAGE_SENT:
                 message_input = input_data or {}
@@ -74,18 +73,13 @@ class HookRegistry:
                     contents=message_input.get("contents", ""),
                 )
 
-            output = hk.run(hook_input) or HookOutput(decision=PermissionDecision.ALLOW)
-            
-            if output.decision == PermissionDecision.DENY:
+            output = hk.run(hook_input) or HookOutput()
+
+            result[hk.name] = output
+            if not output.should_continue:
                 return {
                     hk.name: output
                 }
-            elif output.decision == PermissionDecision.MODIFIED:
-                # TODO: what do we do
-                print("ERROR: MODIFIED OUTPUTS NOT IMPLEMENTED")
-                pass
-            else:
-                result[hk.name] = output
 
         return result
 
@@ -99,10 +93,12 @@ class HookRegistry:
             print(f"WARNING: failed to create session log: {exc}")
         
 
-def _match(pattern: str | None, tool_name: str) -> bool:
-    if pattern is None:
+def _match(pattern: str | None, match_value: str | None) -> bool:
+    if pattern is None or pattern == "":
         return True
-    return bool(re.search(pattern, tool_name))
+    if match_value is None:
+        return False
+    return bool(re.search(pattern, match_value))
 
 
 def _new_session_id() -> str:

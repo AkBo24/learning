@@ -2,7 +2,7 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
-from hooks.types import Hook, HookOutput, PermissionDecision, PostMessageSentInput
+from hooks.types import Hook, PostMessageSentInput, PostMessageSentOutput
 
 
 def _session_path(cwd: str, session_id: str) -> Path:
@@ -13,7 +13,7 @@ def _utc_now() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
-def run(input_data: PostMessageSentInput) -> HookOutput:
+def run(input_data: PostMessageSentInput) -> PostMessageSentOutput:
     session_path = _session_path(input_data.cwd, input_data.session_id)
 
     try:
@@ -42,7 +42,7 @@ def run(input_data: PostMessageSentInput) -> HookOutput:
     except Exception as exc:
         print(f"WARNING: failed to log message: {exc}")
 
-    return HookOutput(decision=PermissionDecision.ALLOW)
+    return PostMessageSentOutput()
 
 
 LogMessageSent = Hook(
