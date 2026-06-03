@@ -36,7 +36,7 @@ class HookRegistry:
         self.cwd = os.getcwd()
         self._create_session_file()
 
-    def run(self, event: HookEvent, tool_name=None, input_data=None) -> dict[str, HookOutput]:
+    def run(self, event: HookEvent, hook_payload=None, metadata=None) -> dict[str, HookOutput]:
         """
         1. Take event, input_data, tool_use_id
         2. Get hooks registered for the event
@@ -45,21 +45,27 @@ class HookRegistry:
         5. Return the final_result
         """
 
+        if metadata is None:
+            metadata = {}
+
         result = {}
         for hk in self._hooks.get(event, []):
             print(f"*********EXECUTING HOOK:{hk}")
             hook_input = None
             if event == HookEvent.PRE_TOOL_USE:
+                tool_name = metadata.get("tool_name")
+                if tool_name is None:
+                    raise ValueError(f"Missing tool_name in hook metadata for {event.value}")
                 hook_input = PreToolUseInput(
                     session_id=self.session_id,
                     cwd=self.cwd,
                     hook_name=hk.name,
                     tool_name=tool_name,
-                    tool_input=input_data or {},
+                    tool_input=hook_payload or {},
                     tool_use_id=tool_name or "",
                 )
             elif event == HookEvent.POST_MESSAGE_SENT:
-                message_input = input_data or {}
+                message_input = hook_payload or {}
                 hook_input = PostMessageSentInput(
                     session_id=self.session_id,
                     cwd=self.cwd,

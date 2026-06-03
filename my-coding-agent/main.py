@@ -82,7 +82,7 @@ def extract_tool_invocations(output):
 def log_message_sent(sender: MessageSender, contents: str):
     hook_registry.run(
         HookEvent.POST_MESSAGE_SENT,
-        input_data={
+        hook_payload={
             "sender": sender,
             "message_type": MessageType.MESSAGE,
             "contents": contents,
@@ -98,9 +98,6 @@ def run_coding_agent_loop():
     log_message_sent(MessageSender.SYSTEM, system_content)
 
     conversation: List[Any] = []
-
-    # hook_registry.run(HookEvent.PRE_TOOL_USE, None, None)
-    # return
 
     while True:
         try:
@@ -133,8 +130,10 @@ def run_coding_agent_loop():
                 print(name, args)
                 hook_output = hook_registry.run(
                     HookEvent.PRE_TOOL_USE,
-                    tool_name=name,
-                    input_data=args,
+                    hook_payload=args,
+                    metadata={
+                        "tool_name": name,
+                    }
                 )
 
                 denied_output = next(
