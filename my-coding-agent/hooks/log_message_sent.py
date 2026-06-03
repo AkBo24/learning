@@ -47,7 +47,6 @@ def run(input_data: PostMessageSentInput) -> PostMessageSentOutput:
 
 LogMessageSent = Hook(
     name="LogMessageSent",
-    matcher=None,
     timeout=30,
     run=run,
 )

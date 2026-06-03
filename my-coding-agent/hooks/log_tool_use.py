@@ -7,7 +7,6 @@ def run(input_data: PreToolUseInput):
 
 LogToolUse = Hook(
     name="LogToolUse",
-    matcher=None,
     timeout=30,
     run=run,
 )

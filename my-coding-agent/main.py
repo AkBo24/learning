@@ -133,7 +133,7 @@ def run_coding_agent_loop():
                 print(name, args)
                 hook_output = hook_registry.run(
                     HookEvent.PRE_TOOL_USE,
-                    match_value=name,
+                    tool_name=name,
                     input_data=args,
                 )
 

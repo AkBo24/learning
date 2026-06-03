@@ -1,5 +1,4 @@
 import os
-import re
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Callable
@@ -37,20 +36,17 @@ class HookRegistry:
         self.cwd = os.getcwd()
         self._create_session_file()
 
-    def run(self, event: HookEvent, match_value=None, input_data=None) -> dict[str, HookOutput]:
+    def run(self, event: HookEvent, tool_name=None, input_data=None) -> dict[str, HookOutput]:
         """
         1. Take event, input_data, tool_use_id
         2. Get hooks registered for the event
-        3. Check if any hooks match the requested pattern
-        4. Run the hook's callback, collect in a single final_result
-        5. If any of the hooks are denied, stop
-        6. Return the final_result...
+        3. Run the hook's callback, collect in a single final_result
+        4. If any hooks stop the chain, stop
+        5. Return the final_result
         """
 
         result = {}
         for hk in self._hooks.get(event, []):
-            if not _match(hk.matcher, match_value):
-                continue
             print(f"*********EXECUTING HOOK:{hk}")
             hook_input = None
             if event == HookEvent.PRE_TOOL_USE:
@@ -58,9 +54,9 @@ class HookRegistry:
                     session_id=self.session_id,
                     cwd=self.cwd,
                     hook_name=hk.name,
-                    tool_name=match_value,
+                    tool_name=tool_name,
                     tool_input=input_data or {},
-                    tool_use_id=match_value or "",
+                    tool_use_id=tool_name or "",
                 )
             elif event == HookEvent.POST_MESSAGE_SENT:
                 message_input = input_data or {}
@@ -91,14 +87,6 @@ class HookRegistry:
                 session_path.write_text("[]\n")
         except Exception as exc:
             print(f"WARNING: failed to create session log: {exc}")
-        
-
-def _match(pattern: str | None, match_value: str | None) -> bool:
-    if pattern is None or pattern == "":
-        return True
-    if match_value is None:
-        return False
-    return bool(re.search(pattern, match_value))
 
 
 def _new_session_id() -> str:

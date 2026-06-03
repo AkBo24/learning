@@ -45,7 +45,6 @@ def run(input_data: PreToolUseInput) -> PreToolUseOutput:
 
 ToolPermissions = Hook(
     name="ToolPermissions",
-    matcher=None,
     timeout=30,
     run=run,
 )
