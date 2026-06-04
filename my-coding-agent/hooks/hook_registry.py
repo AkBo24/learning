@@ -13,9 +13,9 @@ from hooks.types import (
     PostMessageSentInput,
     PreToolUseInput,
 )
-from hooks.log_message_sent import LogMessageSent
-from hooks.log_tool_use import LogToolUse
-from hooks.tool_permissions import ToolPermissions
+from hooks.implementations.log_message_sent import LogMessageSent
+from hooks.implementations.log_tool_use import LogToolUse
+from hooks.implementations.tool_permissions import ToolPermissions
 
 HookCallback = Callable[[dict, str | None], dict]
 

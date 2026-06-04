@@ -9,22 +9,23 @@ Tools are functions that this coding agent can invoke. Currently, all tools are 
 
 ```
 tools/
+  implementations/
+    read_file.py       # tool module example
   types/
     tool.py            # Tool dataclass and OpenAI function config adapter
     tool_names.py      # canonical ToolName enum values
   utils/               # shared helpers used by tools
   tool_registry.py     # imports tool modules, builds TOOL_REGISTRY, exposes execute_tool()
-  read_file_tool.py    # tool module example
   ...
 ```
 
-Tool modules live directly under `tools/` and conventionally use the
-`<tool_name>_tool.py` filename pattern.
+Tool modules live under `tools/implementations/` and conventionally use the
+`<tool_name>.py` filename pattern.
 
 ## Create a new tool
 
 1. Add the new tool name to `/tools/types/tool_names.py`
-2. Create the actual tool under `/tools/<tool_name>_tool.py`. Copy the following format and rename `MY_TOOL` / descriptions for the new tool. Keep the main execution function named `exec_tool`:
+2. Create the actual tool under `/tools/implementations/<tool_name>.py`. Copy the following format and rename `MY_TOOL` / descriptions for the new tool. Keep the main execution function named `exec_tool`:
 
 ```py
 from typing import Any, Dict

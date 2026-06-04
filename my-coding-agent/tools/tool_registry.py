@@ -1,10 +1,10 @@
 from typing import Any, Dict
 
-from tools.delete_file_tool import TOOL as DELETE_FILE_TOOL
-from tools.edit_file_tool import TOOL as EDIT_FILE_TOOL
-from tools.list_files_tool import TOOL as LIST_FILES_TOOL
-from tools.read_file_tool import TOOL as READ_FILE_TOOL
-from tools.run_shell_command_tool import TOOL as RUN_SHELL_COMMAND_TOOL
+from tools.implementations.delete_file import TOOL as DELETE_FILE_TOOL
+from tools.implementations.edit_file import TOOL as EDIT_FILE_TOOL
+from tools.implementations.list_files import TOOL as LIST_FILES_TOOL
+from tools.implementations.read_file import TOOL as READ_FILE_TOOL
+from tools.implementations.run_shell_command import TOOL as RUN_SHELL_COMMAND_TOOL
 
 
 TOOL_REGISTRY = {
