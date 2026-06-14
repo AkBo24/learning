@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Any, Callable, Dict
 
-from tools.enum.tool_names import ToolName
+from tools.types.tool_names import ToolName
 
 
 @dataclass(frozen=True)

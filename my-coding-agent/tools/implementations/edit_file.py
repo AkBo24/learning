@@ -1,7 +1,6 @@
 from typing import Any, Dict
 
-from tools.enum.tool_names import ToolName
-from tools.types import Tool
+from tools.types import Tool, ToolName
 from tools.utils import resolve_abs_path
 
 

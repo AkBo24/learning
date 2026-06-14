@@ -1,15 +1,23 @@
-import inspect
 import json
 
 from openai import OpenAI
 from dotenv import load_dotenv
 from typing import Any, List
 
-from tools import OPENAI_TOOLS, TOOL_REGISTRY, execute_tool
+from tools import OPENAI_TOOLS, execute_tool
+from hooks import (
+    HookRegistry,
+    HookEvent,
+    MessageSender,
+    MessageType,
+    PermissionDecision,
+    PreToolUseOutput,
+)
 
 load_dotenv()
 
 client = OpenAI()
+hook_registry = HookRegistry()
 
 YOU_COLOR = "\u001b[94m"
 ASSISTANT_COLOR = "\u001b[93m"
@@ -70,12 +78,24 @@ def extract_tool_invocations(output):
 
     return invocations
 
+
+def log_message_sent(sender: MessageSender, contents: str):
+    hook_registry.run(
+        HookEvent.POST_MESSAGE_SENT,
+        hook_payload={
+            "sender": sender,
+            "message_type": MessageType.MESSAGE,
+            "contents": contents,
+        },
+    )
+
 def run_coding_agent_loop():
     system_content = get_full_system_prompt()
 
     print("*********** SYSTEM PROMPT *************")
     print(system_content)
     print("*********** SYSTEM PROMPT *************")
+    log_message_sent(MessageSender.SYSTEM, system_content)
 
     conversation: List[Any] = []
 
@@ -85,10 +105,12 @@ def run_coding_agent_loop():
         except (KeyboardInterrupt, EOFError):
             break
 
+        user_message = user_input.strip()
         conversation.append({
             "role": "user",
-            "content": user_input.strip()
+            "content": user_message
         })
+        log_message_sent(MessageSender.USER, user_message)
 
         while True:
             assistant_output, assistant_response = execute_llm_call(system_content, conversation)
@@ -99,13 +121,37 @@ def run_coding_agent_loop():
                 output_text = assistant_response.output_text
                 print(f"{ASSISTANT_COLOR}Assistant:{RESET_COLOR}: {output_text}")
                 conversation.extend(assistant_output)
+                log_message_sent(MessageSender.AGENT, output_text)
                 break
 
             conversation.extend(assistant_output)
 
             for name, args, tool_call in tool_invocations:
-                print(name, args)
-                resp = execute_tool(name, args)
+                hook_output = hook_registry.run(
+                    HookEvent.PRE_TOOL_USE,
+                    hook_payload=args,
+                    metadata={
+                        "tool_name": name,
+                    }
+                )
+
+                denied_output = next(
+                    (
+                        ho
+                        for ho in hook_output.values()
+                        if isinstance(ho, PreToolUseOutput)
+                        and ho.decision == PermissionDecision.DENY
+                    ),
+                    None,
+                )
+                if denied_output is not None:
+                    resp = {
+                        "error": "Tool use denied",
+                        "tool_name": name,
+                        "reason": denied_output.denial_reason or "Tool use was denied by a hook.",
+                    }
+                else:
+                    resp = execute_tool(name, args)
 
                 conversation.append({
                     "type": "function_call_output",
