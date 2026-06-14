@@ -127,7 +127,6 @@ def run_coding_agent_loop():
             conversation.extend(assistant_output)
 
             for name, args, tool_call in tool_invocations:
-                print(name, args)
                 hook_output = hook_registry.run(
                     HookEvent.PRE_TOOL_USE,
                     hook_payload=args,

@@ -14,7 +14,6 @@ class PreToolUseOutput(HookOutput):
     decision: PermissionDecision = PermissionDecision.ALLOW
     denial_reason: Optional[str] = None             # populated when DENY
     updated_input: Optional[Dict[str, Any]] = None  # populated when MODIFIED
-    system_message: Optional[str] = None            # injected into conversation
 
 
 @dataclass(frozen=True)
